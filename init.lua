@@ -123,7 +123,12 @@ vim.keymap.set('', '<C-w>6', '6gt', {desc = 'Go to tab6'})
 vim.keymap.set('', '<C-w>7', '7gt', {desc = 'Go to tab7'})
 vim.keymap.set('', '<C-w>8', '8gt', {desc = 'Go to tab8'})
 
+vim.keymap.set('n', '<C-w>t', ':tabnew %<CR>', {desc = 'Open same file in new tab'})
+vim.keymap.set('n', '<C-w>v', ':vsp<CR>', {desc = 'Open file in vertical split'})
+
 vim.keymap.set('', '<F4>', ':vsplit %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>', {desc = 'Open corresponding header or cpp file'})
+vim.keymap.set('n', '<F6>', ':Gvdiffsplit<CR>', {desc = 'Get the git diff for the file'})
+vim.keymap.set('n', '<F7>', ':Git blame<CR>', {desc = 'Get the git blame for the file'})
 
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
@@ -131,6 +136,7 @@ vim.opt.foldcolumn = "0"
 vim.opt.foldtext = ""
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 10
+vim.keymap.set('n', 'zz', 'za', {desc = 'Toggle fold'})
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -182,8 +188,60 @@ require('lazy').setup({
   'tpope/vim-fugitive', -- Git commands
 
   {
-    'preservim/nerdtree',
-    vim.keymap.set('', '<F5>', ':NERDTreeToggle<CR>', {desc = 'Toggle Nerdtree'})
+    "nvim-tree/nvim-tree.lua",
+    dependencies = "nvim-tree/nvim-web-devicons",
+    config = function()
+      local nvimtree = require("nvim-tree")
+
+      -- recommended settings from nvim-tree documentation
+      vim.g.loaded_netrw = 1
+      vim.g.loaded_netrwPlugin = 1
+
+      nvimtree.setup({
+        view = {
+          width = 35,
+          relativenumber = true,
+        },
+        -- change folder arrow icons
+        renderer = {
+          indent_markers = {
+            enable = true,
+          },
+          icons = {
+            glyphs = {
+              folder = {
+                arrow_closed = "", -- arrow when folder is closed
+                arrow_open = "", -- arrow when folder is open
+              },
+            },
+          },
+        },
+        -- disable window_picker for
+        -- explorer to work well with
+        -- window splits
+        actions = {
+          open_file = {
+            window_picker = {
+              enable = false,
+            },
+          },
+        },
+        filters = {
+          custom = { ".DS_Store" },
+        },
+        git = {
+          ignore = false,
+        },
+      })
+
+      -- set keymaps
+      local keymap = vim.keymap -- for conciseness
+
+      keymap.set("n", "<F1>", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" }) -- toggle file explorer
+      keymap.set("n", "<leader>ef", "<cmd>NvimTreeFindFileToggle<CR>", { desc = "Toggle file explorer on current file" }) -- toggle file explorer on current file
+      keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", { desc = "Collapse file explorer" }) -- collapse file explorer
+      keymap.set("n", "<leader>er", "<cmd>NvimTreeRefresh<CR>", { desc = "Refresh file explorer" }) -- refresh file explorer
+    end
   },
 
   {
@@ -195,6 +253,7 @@ require('lazy').setup({
       }
     end,
   },
+
   {
       'smoka7/hop.nvim',
       version = "*",
@@ -202,6 +261,17 @@ require('lazy').setup({
           keys = 'etovxqpdygfblzhckisuran'
       },
       vim.keymap.set('n', 'f', ':HopWord<CR>', {desc = 'Move across words in the buffer'})
+  },
+
+  {
+    "kylechui/nvim-surround",
+    version = "^3.0.0", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+        require("nvim-surround").setup({
+            -- Configuration here, or leave empty to use defaults
+        })
+    end
   },
 
   -- NOTE: Plugins can also be added by using a table,
@@ -830,12 +900,22 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
+
+  --{
+  --  "Tsuzat/NeoSolarized.nvim",
+  --    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+  --    priority = 1000, -- make sure to load this before all the other start plugins
+  --    config = function()
+  --      vim.cmd.colorscheme 'NeoSolarized'
+  --    end
+  --},
+
   {
-    "Tsuzat/NeoSolarized.nvim",
+    "EdenEast/nightfox.nvim",
       lazy = false, -- make sure we load this during startup if it is your main colorscheme
       priority = 1000, -- make sure to load this before all the other start plugins
       config = function()
-        vim.cmd.colorscheme 'NeoSolarized'
+        vim.cmd.colorscheme 'terafox'
       end
   },
 
@@ -879,23 +959,26 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
-    { -- Highlight, edit, and navigate code
+  { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'cpp', 'diff', 'html', 'lua', 'luadoc', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
-      highlight = {
-        enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby' },
-      },
+      highlight = {  enable = true },
       indent = { enable = true, disable = { 'ruby' } },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = "vv",
+          node_incremental = "vv",
+          scope_incremental = false,
+          node_decremental = "<bs>",
+        },
+      },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
@@ -903,6 +986,42 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  },
+
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+              ["ac"] = { query = "@conditional.outer", desc = "Select outer part of a conditional" },
+              ["ic"] = { query = "@conditional.inner", desc = "Select inner part of a conditional" },
+              ["al"] = { query = "@loop.outer", desc = "Select outer part of a loop" },
+              ["il"] = { query = "@loop.inner", desc = "Select inner part of a loop" },
+              ["am"] = { query = "@function.outer", desc = "Select outer part of a method/function definition" },
+              ["im"] = { query = "@function.inner", desc = "Select inner part of a method/function definition" },
+            },
+          },
+          move = {
+            enable = true,
+            set_jumps = true, -- whether to set jumps in the jumplist
+            goto_next_start = {
+              ["]m"] = { query = "@function.outer", desc = "Next method/function def start" },
+              ["]c"] = { query = "@conditional.outer", desc = "Next conditional start" },
+              ["]l"] = { query = "@loop.outer", desc = "Next loop start" },
+            },
+            goto_previous_start = {
+              ["[m"] = { query = "@function.outer", desc = "Prev method/function def start" },
+              ["[c"] = { query = "@conditional.outer", desc = "Prev conditional start" },
+              ["[l"] = { query = "@loop.outer", desc = "Prev loop start" },
+            },
+          },
+        },
+      })
+    end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
