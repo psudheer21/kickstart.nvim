@@ -188,12 +188,14 @@ require('lazy').setup({
   'tpope/vim-fugitive', -- Git commands
 
   {
+    "EdenEast/nightfox.nvim", lazy = false, priority = 1000, config = function() vim.cmd.colorscheme 'terafox' end
+  },
+
+  {
     "nvim-tree/nvim-tree.lua",
     dependencies = "nvim-tree/nvim-web-devicons",
     config = function()
       local nvimtree = require("nvim-tree")
-
-      -- recommended settings from nvim-tree documentation
       vim.g.loaded_netrw = 1
       vim.g.loaded_netrwPlugin = 1
 
@@ -910,15 +912,6 @@ require('lazy').setup({
   --    end
   --},
 
-  {
-    "EdenEast/nightfox.nvim",
-      lazy = false, -- make sure we load this during startup if it is your main colorscheme
-      priority = 1000, -- make sure to load this before all the other start plugins
-      config = function()
-        vim.cmd.colorscheme 'terafox'
-      end
-  },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -980,12 +973,6 @@ require('lazy').setup({
         },
       },
     },
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
   {
@@ -1009,14 +996,14 @@ require('lazy').setup({
             enable = true,
             set_jumps = true, -- whether to set jumps in the jumplist
             goto_next_start = {
-              ["]m"] = { query = "@function.outer", desc = "Next method/function def start" },
-              ["]c"] = { query = "@conditional.outer", desc = "Next conditional start" },
-              ["]l"] = { query = "@loop.outer", desc = "Next loop start" },
+              ["<C-m>"] = { query = "@function.outer", desc = "Next method/function def start" },
+              ["<C-c>"] = { query = "@conditional.outer", desc = "Next conditional start" },
+              ["<C-l>"] = { query = "@loop.outer", desc = "Next loop start" },
             },
             goto_previous_start = {
-              ["[m"] = { query = "@function.outer", desc = "Prev method/function def start" },
-              ["[c"] = { query = "@conditional.outer", desc = "Prev conditional start" },
-              ["[l"] = { query = "@loop.outer", desc = "Prev loop start" },
+              ["<[m>"] = { query = "@function.outer", desc = "Prev method/function def start" },
+              ["<[c>"] = { query = "@conditional.outer", desc = "Prev conditional start" },
+              ["<[l>"] = { query = "@loop.outer", desc = "Prev loop start" },
             },
           },
         },
