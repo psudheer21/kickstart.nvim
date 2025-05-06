@@ -123,8 +123,8 @@ vim.keymap.set('', '<C-w>6', '6gt', {desc = 'Go to tab6'})
 vim.keymap.set('', '<C-w>7', '7gt', {desc = 'Go to tab7'})
 vim.keymap.set('', '<C-w>8', '8gt', {desc = 'Go to tab8'})
 
-vim.keymap.set('n', '<C-w>t', ':tabnew %<CR>', {desc = 'Open same file in new tab'})
-vim.keymap.set('n', '<C-w>v', ':vsp<CR>', {desc = 'Open file in vertical split'})
+vim.keymap.set('n', '<C-w>T', ':tabnew %<CR>', {desc = 'Open same file in new tab'})
+vim.keymap.set('n', '<C-w>v', ':vsp<CR>', {desc = 'Open same file in vertical split'})
 
 vim.keymap.set('', '<F4>', ':vsplit %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>', {desc = 'Open corresponding header or cpp file'})
 vim.keymap.set('n', '<F6>', ':Gvdiffsplit<CR>', {desc = 'Get the git diff for the file'})
@@ -465,7 +465,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
+      vim.keymap.set('n', '//', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
@@ -572,6 +572,7 @@ require('lazy').setup({
 
           -- Find references for the word under your cursor.
           map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('<C-w>r', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -581,6 +582,7 @@ require('lazy').setup({
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
           map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('<C-w>d', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -598,6 +600,7 @@ require('lazy').setup({
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
           map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+          map('<C-w>t', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
