@@ -138,6 +138,18 @@ vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 10
 vim.keymap.set('n', 'zz', 'za', {desc = 'Toggle fold'})
 
+vim.api.nvim_set_hl(0, 'WinSeparator', { fg = 'black', bold = true })
+vim.opt.fillchars = {
+  horiz     = '━',
+  horizup   = '┻',
+  horizdown = '┳',
+  vert      = '┃',
+  vertleft  = '┫',
+  vertright = '┣',
+  verthoriz = '╋',
+}
+
+
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     pattern = {"*"},
     callback = function()
@@ -198,7 +210,33 @@ require('lazy').setup({
 
   {
     "EdenEast/nightfox.nvim", lazy = false, priority = 1000, config = function() vim.cmd.colorscheme 'terafox' end
-    --"folke/tokyonight.nvim", lazy = false, priority = 1000, config = function() vim.cmd.colorscheme 'tokyonight-moon' end
+  },
+
+  {
+    "folke/flash.nvim",
+    opts = {
+      modes = {
+        search = {
+          enabled = true,
+        },
+      },
+    },
+    keys = {
+      { "m", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "M", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "R", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
+  },
+
+  {
+      'smoka7/hop.nvim',
+      version = "*",
+      opts = {
+          keys = 'etovxqpdygfblzhckisuran'
+      },
+      vim.keymap.set('n', ' ', ':HopWord<CR>', {desc = 'Move across words in the buffer'})
   },
 
   {
@@ -267,13 +305,30 @@ require('lazy').setup({
   },
 
   {
-      'smoka7/hop.nvim',
-      version = "*",
-      opts = {
-          keys = 'etovxqpdygfblzhckisuran'
-      },
-      vim.keymap.set('n', 'f', ':HopWord<CR>', {desc = 'Move across words in the buffer'})
+    'akinsho/bufferline.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function() require('bufferline').setup{
+      options = {
+        mode = 'tabs',
+        numbers = 'ordinal',
+        show_buffer_close_icons = true,
+        show_close_icon = true,
+        show_tab_indicators = true,
+        separator_style = 'slant', -- or 'padded_slant', 'thin', 'padded_thin'
+        enforce_regular_tabs = false,
+        always_show_bufferline = true,
+        offsets = {{
+          filetype = "NvimTree",
+          text = "File Explorer",
+          text_align = "left",
+          special_command = "NvimTreeToggle",
+        }},
+      }
+    }
+    end,
   },
+
+
 
   {
     "kylechui/nvim-surround",
@@ -475,7 +530,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '//', function()
+      vim.keymap.set('n', 'f', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
