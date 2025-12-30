@@ -242,17 +242,13 @@ require('lazy').setup({
   {
     "hedyhli/outline.nvim",
     config = function()
-      -- Example mapping to toggle the outline
-      vim.keymap.set("n", "<leader>o", "<cmd>Outline<CR>", { desc = "Toggle Outline" })
+      vim.keymap.set("n", "<F8>", "<cmd>Outline<CR>", { desc = "Toggle Outline" })
       require("outline").setup {
-        -- Your setup options here (leave empty to use defaults)
+        symbols = {
+          filter = { "Function", "Method", "Class" },
+        },
       }
     end,
-    -- Optional: lazy-load the plugin on commands
-    cmd = { "Outline", "OutlineOpen" },
-    keys = {
-      { "<F8>", "<cmd>Outline<CR>", desc = "Toggle outline" },
-    },
   },
 
   {
