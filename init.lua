@@ -45,8 +45,8 @@ vim.opt.tabstop=4
 vim.opt.shiftwidth=4
 vim.opt.expandtab=true
 
-vim.opt.textwidth = 89
-vim.opt.colorcolumn="90"
+vim.opt.textwidth = 99
+vim.opt.colorcolumn="100"
 
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
