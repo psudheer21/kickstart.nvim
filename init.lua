@@ -240,6 +240,11 @@ require('lazy').setup({
   },
 
   {
+    'fei6409/log-highlight.nvim',
+    opts = {},
+  },
+
+  {
     "hedyhli/outline.nvim",
     config = function()
       vim.keymap.set("n", "<F8>", "<cmd>Outline<CR>", { desc = "Toggle Outline" })
